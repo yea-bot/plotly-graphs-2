@@ -9,12 +9,15 @@ def save_file_list_to_json(output_file):
     # 디렉토리 내 모든 파일을 리스트로 저장
     file_list = []
     for root, dirs, files in os.walk(directory_path):
+        # '.git' 디렉토리를 건너뛰기
+        if '.git' in dirs:
+            dirs.remove('.git')  # 해당 디렉토리를 검색 대상에서 제외
+
         for file in files:
-            # 파일의 절대 경로를 얻고 싶은 경우 사용: os.path.abspath(os.path.join(root, file))
             file_path = os.path.join(root, file)
             file_list.append(file_path)
 
-    output_path=os.path.join(directory_path, output_file)
+    output_path = os.path.join(directory_path, output_file)
 
     # 파일 목록을 JSON 파일로 저장
     with open(output_path, 'w') as json_file:

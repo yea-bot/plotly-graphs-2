@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotly 그래프</title>
+    <!-- Plotly.js 라이브러리 포함 -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <!-- 그래프를 삽입할 div 태그 -->
+    <div id="plotly-graph"></div>
+    <!-- Plotly 그래프 스크립트 -->
+    <script>
+        // JSON 데이터 경로
+        var json_urls = [
+        'https://yea-bot.github.io/plotly-graphs-2/Cr0.5_1_plot',
+
+        // 필요한 만큼 추가
+        ];
+
+        // 파일 목록 JSON 파일 경로
+        var filesListUrl = 'https://yea-bot.github.io/plotly-graphs-2/files.json';
+
+        // 파일 목록 JSON 불러오기
+        fetch(filesListUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(jsonUrls => {
+            return Promise.all(jsonUrls.map(url => fetch(url).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })));
+        })
+        .then(dataArray => {
+            var allGraphData = [];
+            var allGraphLayout = null;
+            
+            dataArray.forEach(data => {
+                var graphData = data.data;
+                var graphLayout = data.layout;
+
+                allGraphData = allGraphData.concat(graphData);
+                if (!allGraphLayout) {
+                    allGraphLayout = graphLayout;
+                }
+            });
+
+
+            Plotly.newPlot('plotly-graph', allGraphData, allGraphLayout);
+        })
+        .catch(error => console.error('Error fetching JSON data:', error));
+    </script>
+</body>
+</html>
